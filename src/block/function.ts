@@ -32,7 +32,21 @@ export default class FunctionBlock extends Block
 
 
         if (argString != "") {
-            let args = argString.split(',');
+            // FIX #143
+            let argArr = argString.split(/(,\s\$)|(,\$)|(,[a-z]+\s\$)|(,\s[a-z]+\s\$)/);
+            let argsNewArr = [];
+            for (let i = 0; i < argArr.length; i++) {
+                if (argArr[i] !== undefined) {
+                    if (argArr[i].indexOf(',') === 0) {
+                        argsNewArr.push(argArr[i].replace(',', '<#>'));
+                    } else {
+                        argsNewArr.push(argArr[i]);
+                    }
+                }
+            }
+            argString = argsNewArr.join('');
+            
+            let args = argString.split('<#>');
 
             if (Config.instance.get('qualifyClassNames')) {
                 head = this.getClassHead();
